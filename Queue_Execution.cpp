@@ -8,7 +8,6 @@ queue<int> q;
 
 void queue_edit(string input){
 
-    string();
     char temp[200] = "";
 
 
