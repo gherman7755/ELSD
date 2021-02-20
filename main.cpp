@@ -17,7 +17,7 @@ int main()
     if (commands == "create_queue")
         while (commands != "draw()"){
             getline(file, commands);
-            data_structure(commands);
+            queue_edit(commands);
         }
 
     file.close();
