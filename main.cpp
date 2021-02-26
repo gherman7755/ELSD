@@ -2,6 +2,7 @@
 #include <string>
 #include <fstream>
 #include "Queue_Execution.h"
+#include "enteryDictionary.h"
 
 using namespace std;
 
@@ -14,8 +15,8 @@ int main()
     file.open(PATH);
 
     getline(file, commands);
-    if (commands == "create_queue")
-        while (commands != "draw()"){
+    if (valid_start(commands))
+        while (true){
             getline(file, commands);
             queue_edit(commands);
         }
