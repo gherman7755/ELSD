@@ -8,24 +8,28 @@ bool valid_end(string input){
     if(input.find(end) == input.size() - 1)
         return true;
     else{
-        cout << "Expected \';\'" << endl;
+        cout << "Expected \';\' or incorrect position" << endl;
         exit(0);
     }
 }
 
-bool valid_brackets(string input){
-    bool are_brackets = false;
-    bool are_empty_brackets = false;
-
+bool are_brackets(string input){
     if (input.find('(') < input.size() and input.find(')') < input.size())
-        are_brackets = true;
+        return true;
+    else
+        return false;
+}
 
-    if (are_brackets){
+bool valid_brackets(string input){
+    bool are_empty_brackets = false;
+    bool brackets = are_brackets(input);
+
+    if (brackets){
         if (input.find('(') + 1 == input.find(')'))
             are_empty_brackets = true;
     }
 
-    if(are_brackets) {
+    if(brackets) {
         if (are_empty_brackets) {
             return true;
         } else {
@@ -37,6 +41,50 @@ bool valid_brackets(string input){
         cout << "Expected brackets" << endl;
         exit(0);
     }
+}
+
+int pop_or_push(string input){
+    bool is_command = false;
+    char temp[100] = "";
+    string push_command = "push";
+    string pop_command = "pop";
+    for(int i = 0; i < input.size(); ++i){
+        if(input[i] == '('){
+            break;
+        }
+        else
+            temp[i] = input[i];
+    }
+
+    if(temp == push_command) {
+        return 6;
+    }
+
+
+    if (temp == pop_command) {
+        if(valid_end(input) and valid_brackets(input)){
+            return 5;
+        }
+
+    }else if(not is_command){
+        cout << "Invalid command" << endl;
+        exit(0);
+    }
+}
+
+int take_value(string input){
+    char value[200] = "";
+    for(int i = 0, j = 0; i < input.size(); i++){
+        if(input[i] == '('){
+            i++;
+            while(input[i] != ')'){
+                value[j] = input[i];
+                i++;
+                j++;
+            }
+        }
+    }
+    return atoi(value);
 }
 
 int analyze_input(string input, int *val){
@@ -59,55 +107,19 @@ int analyze_input(string input, int *val){
     }
 
     else if(input[0] == 'p'){
-        bool is_admit = false;
-        bool is_command = false;
-        char temp[100] = "";
-        string command = "push";
-        for(int i = 0; i < input.size(); ++i){
-            if(input[i] == '('){
-                break;
-            }
-            else
-                temp[i] = input[i];
-        }
 
-        if(temp == command) {
-            is_command = true;
-            is_admit = is_push(input);
-        }
+        int choice = pop_or_push(input);
 
-        command = "pop";
-        for (int i = 0; i < input.size(); i++) {
-            if (input[i] == '(')
-                break;
-            else
-                temp[i] = input[i];
-        }
-        if (temp == command) {
-            if(valid_end(input) and valid_brackets(input)){
-                return 5;
-            }
-        }else if(not is_command){
-            cout << "Invalid command" << endl;
-            exit(0);
-        }
+        if(choice == 5)
+            return 5;
 
-        char value[200] = "";
-        if(is_command and is_admit){
-            for(int i = 0, j = 0; i < input.size(); i++){
-                if(input[i] == '('){
-                    i++;
-                    while(input[i] != ')'){
-                        value[j] = input[i];
-                        i++;
-                        j++;
-                    }
-                }
-            }
-            (*val) = atoi(value);
+        else if(choice == 6){
+
+            if(is_push(input)){
+            (*val) = take_value(input);
             return 6;
+            }
         }
-
     }
     else{
         cout << "Invalid command" << endl;
@@ -115,20 +127,16 @@ int analyze_input(string input, int *val){
     }
 }
 
-
 bool is_push(string input){
     if(valid_end(input)){
-        bool are_brackets = false;
+        bool brackets = are_brackets(input);
         bool contains_value = false;
 
-        if (input.find('(') < input.size() and input.find(')') < input.size())
-            are_brackets = true;
-
-        if (are_brackets){
+        if (brackets){
             if (input.find('(') < input.find(')') - 1)
                 contains_value = true;
         }
-        if(are_brackets) {
+        if(brackets) {
             if (contains_value) {
                 return true;
             } else {
